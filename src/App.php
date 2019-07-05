@@ -9,7 +9,9 @@ use DontBeAlone\module\dispatcher\Dispatcher;
 
 class App extends AppAbstract {
     public function run() {
-        return (new Dispatcher())->dispatch();
+        return (new Dispatcher([
+            'database' => $this->database
+        ]))->dispatch();
     }
 
     public function setupDatabaseConfig(): DatabaseAbstract {

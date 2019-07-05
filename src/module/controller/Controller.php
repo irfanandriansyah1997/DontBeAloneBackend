@@ -1,10 +1,18 @@
 <?php
 namespace DontBeAlone\module\controller;
 
-use DontBeAlone\module\controller\interfaces\ControllerAbstract;
-
 class Controller
 {
+    private $database;
+
+    function __construct($database) {
+        $this->database = $database;
+    }
+
+    public function getDatabase() {
+        return $this->database;
+    }
+
     private function secureInput($data) {
         $data = trim($data);
         $data = stripslashes($data);

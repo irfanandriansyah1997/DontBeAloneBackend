@@ -1,11 +1,12 @@
 <?php
 namespace DontBeAlone\controller;
 
-// use DontBeAlone\module\controller\Controller;
+use DontBeAlone\module\controller\Controller;
 
-class indexController {
+class indexController extends Controller{
+
     public function index() {
-        echo "index";
+        print_r($this->getDatabase());
     }
 
     public function create() {

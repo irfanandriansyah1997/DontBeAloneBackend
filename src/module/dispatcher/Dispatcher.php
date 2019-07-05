@@ -6,9 +6,13 @@ use DontBeAlone\module\router\Router;
 
 class Dispatcher {
     private $request;
+    private $database;
 
-    public function dispatch()
-    {
+    function __construct($param) {
+        $this->database = $param['database'];
+    }
+
+    public function dispatch() {
         $this->request = new Request();
         Router::parse($this->request->url, $this->request);
 
@@ -17,9 +21,8 @@ class Dispatcher {
         call_user_func_array([$controller, $this->request->action], $this->request->params);
     }
 
-    public function loadController()
-    {
+    public function loadController() {
         $controller = Router::registerController();
-        return new $controller[$this->request->controller]();
+        return new $controller[$this->request->controller]($this->database);
     }
 }
