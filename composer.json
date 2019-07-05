@@ -1,0 +1,17 @@
+{
+    "name": "dontbealone/backend",
+    "description": "Dont Be Alone Backend API",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Irfan Andriansyah",
+            "email": "irfanandriansyah10@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "DontBeAlone\\": "src/"
+        }
+    }
+}
