@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ .'/../vendor/autoload.php';
 
-use DontBeAlone\module\controller\Controller;
+use DontBeAlone\App;
 
-$controller = new Controller();
-$controller->hello();
+(new App())->run();
