@@ -5,10 +5,11 @@ use DontBeAlone\module\app\abstracts\AppAbstract;
 use DontBeAlone\module\database\MySQL;
 use DontBeAlone\module\database\DatabaseConfig;
 use DontBeAlone\module\database\abstracts\DatabaseAbstract;
+use DontBeAlone\module\dispatcher\Dispatcher;
 
 class App extends AppAbstract {
     public function run() {
-        echo "run";
+        return (new Dispatcher())->dispatch();
     }
 
     public function setupDatabaseConfig(): DatabaseAbstract {

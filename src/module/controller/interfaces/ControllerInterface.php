@@ -2,5 +2,5 @@
 namespace DontBeAlone\module\controller\interfaces;
 
 interface ControllerInterfaces {
-    public function setRouter();
+    public function secureForm($form);
 } 

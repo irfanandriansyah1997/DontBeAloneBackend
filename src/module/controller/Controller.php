@@ -1,9 +1,21 @@
 <?php
 namespace DontBeAlone\module\controller;
 
-class Controller 
+use DontBeAlone\module\controller\interfaces\ControllerAbstract;
+
+class Controller
 {
-    public function contructor() {
-        echo "hai";
+    private function secureInput($data) {
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+
+        return $data;
+    }
+
+    public function secureForm($form) {
+        foreach ($form as $key => $value) {
+            $form[$key] = $this->secure_input($value);
+        }
     }
 }
