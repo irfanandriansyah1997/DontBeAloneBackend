@@ -100,5 +100,45 @@ class userController extends Controller {
     }
 
     public function update_password() {
+        if (isset($_POST['username'])) {
+            $field = [['key' => 'password', 'format' => '%s']];
+            $source = ['password' => md5($_POST['password'])];
+            $form = (new Form($field))
+                ->setSource($source)
+                ->removeFieldNull()
+                ->result('update');
+            $response = $this->get_user($_POST['username']);
+        
+            if (count($response) > 0) {
+                $updatedUser = $this->getDatabase()->update(
+                    't_user',
+                    $form['value'],
+                    $form['format'],
+                    array('username' => $_POST['username']),
+                    array('%s')
+                );
+    
+                if ($updatedUser) {
+                    $existingUser = $this->get_user($_POST['username']);
+                    return json_encode([
+                        "data" => $existingUser[0],
+                        "message" => "Success Updated User",
+                        "success" => true
+                    ]);
+                }
+            }
+        
+            return json_encode([
+                "data" => null,
+                "message" => "An error has occured, please contact the administrator",
+                "success" => false
+            ]);
+        }
+
+        return json_encode([
+            "data" => null,
+            "message" => "Oops, username not defined",
+            "success" => false
+        ]);
     }
 }
