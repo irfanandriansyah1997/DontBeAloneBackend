@@ -2,6 +2,7 @@
 namespace DontBeAlone\module\router;
 
 use DontBeAlone\module\request\Request;
+use DontBeAlone\controller\activityController;
 use DontBeAlone\controller\indexController;
 use DontBeAlone\controller\authController;
 
@@ -22,6 +23,7 @@ class Router {
 
     static public function registerController() {
         return [
+            'activity' => activityController::class,
             'index' => indexController::class,
             'auth' => authController::class
         ];
