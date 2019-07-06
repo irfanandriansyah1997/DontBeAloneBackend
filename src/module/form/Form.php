@@ -59,20 +59,24 @@ class Form {
         return $this;
     }
 
-    public function result(): array {
+    public function result(string $type = 'insert'): array {
         return array(
             'plain' => $this->result_parse,
-            'value' => Form::getAttribute('value', $this->result_parse),
-            'format' => Form::getAttribute('format', $this->result_parse)
+            'value' => Form::getAttribute('value', $this->result_parse, $type),
+            'format' => Form::getAttribute('format', $this->result_parse, $type)
         );
     }
 
-    static function getAttribute(string $key, array $list) {
-        return array_values(
-            array_map(function($item) use ($key) {
-                return $item[$key];
-            }, $list)
-        );
+    static function getAttribute(string $key, array $list, string $type) {
+        $temp = array_map(function($item) use ($key) {
+            return $item[$key];
+        }, $list);
+
+        if ($key === 'value') {
+            return $temp;
+        }
+
+        return array_values($temp);
     }
 
     static function secureInput(string $data): string {
