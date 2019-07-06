@@ -3,6 +3,7 @@ namespace DontBeAlone\module\router;
 
 use DontBeAlone\module\request\Request;
 use DontBeAlone\controller\indexController;
+use DontBeAlone\controller\authController;
 
 class Router {
     static public function parse($url, $request) {
@@ -21,7 +22,8 @@ class Router {
 
     static public function registerController() {
         return [
-            'index' => indexController::class
+            'index' => indexController::class,
+            'auth' => authController::class
         ];
     }
 }

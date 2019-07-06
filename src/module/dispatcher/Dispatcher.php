@@ -17,8 +17,17 @@ class Dispatcher {
         Router::parse($this->request->url, $this->request);
 
         $controller = $this->loadController();
+        $this->setBehaviour($controller->behaviour()[$this->request->action]);
 
-        call_user_func_array([$controller, $this->request->action], $this->request->params);
+        echo call_user_func_array([$controller, $this->request->action], $this->request->params);
+    }
+
+    private function setBehaviour($behaviour) {
+        $header = $behaviour['header'];
+
+        foreach($header as $value) {
+            header($value);
+        }
     }
 
     public function loadController() {
