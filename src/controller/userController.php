@@ -25,8 +25,8 @@ class userController extends Controller {
         ];
     }
 
-    public function get_user_by_username(string $username) {
-        $response = $this->getDatabase()->select(
+    public function get_user(string $username) {
+        return $this->getDatabase()->select(
             'SELECT *
             FROM t_user
             WHERE username = ?
@@ -34,6 +34,10 @@ class userController extends Controller {
             array($username),
             array('%s')
         );
+    }
+
+    public function get_user_by_username(string $username) {
+        $response = $this->get_user($username);
 
         if (count($response) > 0) {
             return json_encode([
@@ -55,17 +59,35 @@ class userController extends Controller {
             $field = [['key' => 'email', 'format' => '%s'], ['key' => 'name', 'format' => '%s'],
                 ['key' => 'phone_number', 'format' => '%s'], ['key' => 'address', 'format' => '%s'],
                 ['key' => 'bio', 'format' => '%s']];
-
             $form = (new Form($field))
                 ->setSource($_POST)
                 ->removeFieldNull()
                 ->removeSpecialChar()
-                ->result();
-
-
+                ->result('update');
+            $response = $this->get_user($_POST['username']);
+        
+            if (count($response) > 0) {
+                $updatedUser = $this->getDatabase()->update(
+                    't_user',
+                    $form['value'],
+                    $form['format'],
+                    array('username' => $_POST['username']),
+                    array('%s')
+                );
+    
+                if ($updatedUser) {
+                    $existingUser = $this->get_user($_POST['username']);
+                    return json_encode([
+                        "data" => $existingUser[0],
+                        "message" => "Success Updated User",
+                        "success" => true
+                    ]);
+                }
+            }
+        
             return json_encode([
                 "data" => null,
-                "message" => "Oops, username not defined",
+                "message" => "An error has occured, please contact the administrator",
                 "success" => false
             ]);
         }
