@@ -2,34 +2,18 @@
 namespace DontBeAlone\controller;
 
 use DontBeAlone\module\controller\Controller;
+use DontBeAlone\traits\ActivityType;
     
 class activityController extends Controller {
+    use ActivityType;
+
     public function behaviour() {
         return [
-            'index' => [
-                'header' => [
-                    'Content-Type: application/json;charset=utf-8'
-                ]
-            ],
-            'update' => [
-                'header' => [
-                    'Content-Type: application/json;charset=utf-8'
-                ]
-            ],
-            'update_password' => [
+            'get_activity_type' => [
                 'header' => [
                     'Content-Type: application/json;charset=utf-8'
                 ]
             ]
         ];
-    }
-
-    public function action_index(string $username) {
-    }
-
-    public function action_update() {
-    }
-
-    public function action_update_password() {
     }
 }
