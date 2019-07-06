@@ -16,18 +16,4 @@ abstract class Controller
     public function getDatabase(): MySQL {
         return $this->database;
     }
-
-    private function secureInput($data): string {
-        $data = trim($data);
-        $data = stripslashes($data);
-        $data = htmlspecialchars($data);
-
-        return $data;
-    }
-
-    public function secureForm($form): void {
-        foreach ($form as $key => $value) {
-            $form[$key] = $this->secure_input($value);
-        }
-    }
 }
