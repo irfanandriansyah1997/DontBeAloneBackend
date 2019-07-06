@@ -67,7 +67,7 @@ class authController extends Auth {
     public function login_fb() {
         $field = [
             'email' => $_POST['email'],
-            'fb_id' => md5($_POST['fb_id'])
+            'fb_id' => $_POST['fb_id']
         ];
 
         return $this->loginBySocialMedia('fb_id', $field);
@@ -76,7 +76,7 @@ class authController extends Auth {
     public function login_tw() {
         $field = [
             'email' => $_POST['email'],
-            'tw_id' => md5($_POST['tw_id'])
+            'tw_id' => $_POST['tw_id']
         ];
 
         return $this->loginBySocialMedia('tw_id', $field);
@@ -85,7 +85,7 @@ class authController extends Auth {
     public function login_gp() {
         $field = [
             'email' => $_POST['email'],
-            'gp_id' => md5($_POST['gp_id'])
+            'gp_id' => $_POST['gp_id']
         ];
 
         return $this->loginBySocialMedia('gp_id', $field);

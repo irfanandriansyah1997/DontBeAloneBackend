@@ -94,9 +94,8 @@ class MySQL extends DatabaseAbstract {
         $stmt = $db->prepare("UPDATE {$table} SET {$placeholders} WHERE {$where_clause}");
 
         call_user_func_array( array( $stmt, 'bind_param'), $this->refValues($values));
-        $stmt->execute();
         
-        if ($stmt->affected_rows > 0) {
+        if ($stmt->execute()) {
             return true;
         }
         
