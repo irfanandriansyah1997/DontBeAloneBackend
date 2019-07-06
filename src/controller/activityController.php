@@ -2,21 +2,34 @@
 namespace DontBeAlone\controller;
 
 use DontBeAlone\module\controller\Controller;
-
+    
 class activityController extends Controller {
-    public function index() {
-        echo "index";
+    public function behaviour() {
+        return [
+            'index' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
+            ],
+            'update' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
+            ],
+            'update_password' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
+            ]
+        ];
     }
 
-    public function create() {
-        echo "create";
+    public function action_index(string $username) {
     }
 
-    public function edit(string $id) {
-        echo "edit {$id}";
+    public function action_update() {
     }
 
-    public function delete(string $id) {
-        echo "delete {$id}";
+    public function action_update_password() {
     }
 }

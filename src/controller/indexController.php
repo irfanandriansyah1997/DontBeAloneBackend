@@ -14,12 +14,12 @@ class indexController extends Controller{
         ];
     }
 
-    public function index() {
+    public function action_index() {
         $a = $this->getDatabase()->query('SELECT * FROM appdb.users');
         print_r($a);
     }
 
-    public function get(string $id) {
+    public function action_get(string $id) {
         $a = $this->getDatabase()->select(
             'SELECT * FROM appdb.users WHERE id = ?',
             array($id),
@@ -28,7 +28,7 @@ class indexController extends Controller{
         print_r($a);
     }
 
-    public function create() {
+    public function action_create() {
         $a = $this->getDatabase()->insert(
             'users',
             [
@@ -47,7 +47,7 @@ class indexController extends Controller{
         print_r($a ? 'sukses' : 'gagal');
     }
 
-    public function edit(string $id) {
+    public function action_edit(string $id) {
         $a = $this->getDatabase()->update(
             'users',
             [
@@ -68,7 +68,7 @@ class indexController extends Controller{
         print_r($a ? 'sukses' : 'gagal');
     }
 
-    public function delete(string $id) {
+    public function action_delete(string $id) {
         $a = $this->getDatabase()->delete('users', 'id', $id);
 
         print_r($a ? 'sukses' : 'gagal');

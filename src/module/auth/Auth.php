@@ -63,9 +63,9 @@ abstract class Auth extends Controller {
         ]);
     }
 
-    abstract public function login_fb();
+    abstract public function action_login_fb();
 
-    abstract public function login_tw();
+    abstract public function action_login_tw();
 
-    abstract public function login_gp();
+    abstract public function action_login_gp();
 }
