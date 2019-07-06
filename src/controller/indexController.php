@@ -4,6 +4,15 @@ namespace DontBeAlone\controller;
 use DontBeAlone\module\controller\Controller;
 
 class indexController extends Controller{
+    public function behaviour() {
+        return [
+            'index' => ['header' => []],
+            'get' => ['header' => []],
+            'create' => ['header' => []],
+            'edit' => ['header' => []],
+            'delete' => ['header' => []]
+        ];
+    }
 
     public function index() {
         $a = $this->getDatabase()->query('SELECT * FROM appdb.users');
@@ -12,9 +21,9 @@ class indexController extends Controller{
 
     public function get(string $id) {
         $a = $this->getDatabase()->select(
-            'SELECT * FROM appdb.users WHERE id = ? and username = ?',
-            array($id, 'ihan'),
-            array('%d', '%s')
+            'SELECT * FROM appdb.users WHERE id = ?',
+            array($id),
+            array('%d')
         );
         print_r($a);
     }
