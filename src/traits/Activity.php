@@ -4,13 +4,9 @@ namespace DontBeAlone\traits;
 use DontBeAlone\module\form\Form;
 
 trait Activity {
-    private function getIdActivity(string $username) {
-        return time() + crc32($username);
-    }
-
     public function action_insert() {
         if (isset($_POST['activity_type']) && isset($_POST['username'])) {
-            if (count($this->get_user($_POST['username'])) > 0) {
+            if (count($this->getUser($_POST['username'])) > 0) {
                 $field = [
                     ['key' => 'id_activity', 'format' => '%d'],
                     ['key' => 'activity_name', 'format' => '%s'],
@@ -40,7 +36,7 @@ trait Activity {
                 );
     
                 if ($insertQuery) {
-                    $this->insert_activity_user(
+                    $this->insertActivityUser(
                         $_POST['username'],
                         $form['value']['id_activity'],
                         'admin',
@@ -92,7 +88,7 @@ trait Activity {
                 ->removeSpecialChar()
                 ->result('insert');
 
-            $isAvailable = $this->get_activity($id_activity);
+            $isAvailable = $this->getActivity($id_activity);
 
             if(count($isAvailable) > 0) {
                 $updatedQuery = $this->getDatabase()->update(
@@ -133,7 +129,7 @@ trait Activity {
     }
 
     public function action_banned(string $id_activity) {
-        $isAvailable = $this->get_activity($id_activity);
+        $isAvailable = $this->getActivity($id_activity);
 
         if(count($isAvailable) > 0) {
             $bannedQuery = $this->getDatabase()->update(
@@ -168,7 +164,11 @@ trait Activity {
         ]);
     }
 
-    private function get_user(string $username) {
+    private function getIdActivity(string $username) {
+        return time() + crc32($username);
+    }
+
+    private function getUser(string $username) {
         return $this->getDatabase()->select(
             'SELECT *
             FROM t_user
@@ -179,7 +179,7 @@ trait Activity {
         );
     }
 
-    private function get_activity(string $id_activity) {
+    private function getActivity(string $id_activity) {
         return $this->getDatabase()->select(
             'SELECT *
             FROM t_activity

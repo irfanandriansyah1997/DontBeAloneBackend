@@ -11,6 +11,12 @@ class activityController extends Controller {
     use ActivityType;
     use ActivityUser;
 
+    const STATUS = [
+        '0' => 'Pending',
+        '1' => 'Accepted',
+        '2' => 'Reject'
+    ];
+
     public function behaviour() {
         return [
             'insert' => [
@@ -29,6 +35,21 @@ class activityController extends Controller {
                 ]
             ],
             'get_activity_type' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
+            ],
+            'join_activity' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
+            ],
+            'grant_activity' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
+            ],
+            'get_user_role' => [
                 'header' => [
                     'Content-Type: application/json;charset=utf-8'
                 ]
