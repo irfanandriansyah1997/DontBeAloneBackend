@@ -4,47 +4,73 @@ namespace DontBeAlone\traits;
 use DontBeAlone\module\form\Form;
 
 trait Activity {
-    public function action_insert() {
-        if (isset($_POST['activity_type'])) {
-            $field = [
-                ['key' => 'activity_name', 'format' => '%s'],
-                ['key' => 'activity_type', 'format' => '%d'],
-                ['key' => 'price', 'format' => '%d'],
-                ['key' => 'description', 'format' => '%s'],
-                ['key' => 'lat', 'format' => '%d'],
-                ['key' => 'lng', 'format' => '%d'],
-                ['key' => 'address', 'format' => '%s']
-            ];
-            $form = (new Form($field))
-                ->setSource($_POST)
-                ->removeFieldNull()
-                ->removeSpecialChar()
-                ->result('insert');
-            
-            $insertQuery = $this->getDatabase()->insert(
-                't_activity',
-                $form['value'],
-                $form['format']
-            );
+    private function getIdActivity(string $username) {
+        return time() + crc32($username);
+    }
 
-            if ($insertQuery) {
+    public function action_insert() {
+        if (isset($_POST['activity_type']) && isset($_POST['username'])) {
+            if (count($this->get_user($_POST['username'])) > 0) {
+                $field = [
+                    ['key' => 'id_activity', 'format' => '%d'],
+                    ['key' => 'activity_name', 'format' => '%s'],
+                    ['key' => 'activity_type', 'format' => '%d'],
+                    ['key' => 'price', 'format' => '%d'],
+                    ['key' => 'description', 'format' => '%s'],
+                    ['key' => 'lat', 'format' => '%d'],
+                    ['key' => 'lng', 'format' => '%d'],
+                    ['key' => 'address', 'format' => '%s']
+                ];
+                $form = (new Form($field))
+                    ->setSource(
+                        array_merge(
+                            $_POST,
+                            array(
+                                'id_activity' => $this->getIdActivity($_POST['username'])
+                            )
+                        )
+                    )->removeFieldNull()
+                    ->removeSpecialChar()
+                    ->result('insert');
+                
+                $insertQuery = $this->getDatabase()->insert(
+                    't_activity',
+                    $form['value'],
+                    $form['format']
+                );
+    
+                if ($insertQuery) {
+                    $this->insert_activity_user(
+                        $_POST['username'],
+                        $form['value']['id_activity'],
+                        'admin',
+                        '1'
+                    );
+
+                    return json_encode([
+                        "data" => $form['value'],
+                        "message" => "Activity success saved to db",
+                        "success" => true
+                    ]);
+                }
+
                 return json_encode([
-                    "data" => $form['value'],
-                    "message" => "Activity success saved to db",
-                    "success" => true
+                    "data" => null,
+                    "message" => "An error has occured, please contact the administrator",
+                    "success" => false
+                ]);
+            } else {
+                return json_encode([
+                    "data" => null,
+                    "message" => "Username {$_POST['username']} not found",
+                    "success" => false
                 ]);
             }
-
-            return json_encode([
-                "data" => null,
-                "message" => "An error has occured, please contact the administrator",
-                "success" => false
-            ]);
         }
 
         return json_encode([
             "data" => null,
-            "message" => "Activity Type is not found",
+            "message" => "Activity Type / Username is not found",
             "success" => false
         ]);
     }
@@ -140,6 +166,17 @@ trait Activity {
             "message" => "Oops activity is not found",
             "success" => false
         ]);
+    }
+
+    private function get_user(string $username) {
+        return $this->getDatabase()->select(
+            'SELECT *
+            FROM t_user
+            WHERE username = ?
+            LIMIT 0,1',
+            array($username),
+            array('%s')
+        );
     }
 
     private function get_activity(string $id_activity) {

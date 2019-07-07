@@ -4,10 +4,12 @@ namespace DontBeAlone\controller;
 use DontBeAlone\module\controller\Controller;
 use DontBeAlone\traits\Activity;
 use DontBeAlone\traits\ActivityType;
+use DontBeAlone\traits\ActivityUser;
     
 class activityController extends Controller {
     use Activity;
     use ActivityType;
+    use ActivityUser;
 
     public function behaviour() {
         return [
