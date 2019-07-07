@@ -36,7 +36,7 @@ class userController extends Controller {
         );
     }
 
-    public function get_user_by_username(string $username) {
+    public function action_get_user_by_username(string $username) {
         $response = $this->get_user($username);
 
         if (count($response) > 0) {
@@ -54,7 +54,7 @@ class userController extends Controller {
         ]);
     }
 
-    public function update() {
+    public function action_update() {
         if (isset($_POST['username'])) {
             $field = [['key' => 'email', 'format' => '%s'], ['key' => 'name', 'format' => '%s'],
                 ['key' => 'phone_number', 'format' => '%s'], ['key' => 'address', 'format' => '%s'],
@@ -99,7 +99,7 @@ class userController extends Controller {
         ]);
     }
 
-    public function update_password() {
+    public function action_update_password() {
         if (isset($_POST['username'])) {
             $field = [['key' => 'password', 'format' => '%s']];
             $source = ['password' => md5($_POST['password'])];

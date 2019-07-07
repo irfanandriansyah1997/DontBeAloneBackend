@@ -2,21 +2,67 @@
 namespace DontBeAlone\controller;
 
 use DontBeAlone\module\controller\Controller;
-
+use DontBeAlone\traits\Activity;
+use DontBeAlone\traits\ActivityGeofencing;
+use DontBeAlone\traits\ActivityType;
+use DontBeAlone\traits\ActivityUser;
+    
 class activityController extends Controller {
-    public function index() {
-        echo "index";
-    }
+    use Activity;
+    use ActivityGeofencing;
+    use ActivityType;
+    use ActivityUser;
 
-    public function create() {
-        echo "create";
-    }
+    const STATUS = [
+        '0' => 'Pending',
+        '1' => 'Accepted',
+        '2' => 'Reject'
+    ];
+    const RADIUS = 6373;
+    const MAX_DISTANCE = 20;
 
-    public function edit(string $id) {
-        echo "edit {$id}";
-    }
-
-    public function delete(string $id) {
-        echo "delete {$id}";
+    public function behaviour() {
+        return [
+            'get_activity' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
+            ],
+            'insert' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
+            ],
+            'update' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
+            ],
+            'banned' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
+            ],
+            'get_activity_type' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
+            ],
+            'join_activity' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
+            ],
+            'grant_activity' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
+            ],
+            'get_user_role' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
+            ]
+        ];
     }
 }

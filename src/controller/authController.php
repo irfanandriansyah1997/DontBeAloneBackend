@@ -34,7 +34,7 @@ class authController extends Auth {
         ];
     }
 
-    public function login() {
+    public function action_login() {
         $field = [
             'username' => $_POST['username'],
             'password' => md5($_POST['password'])
@@ -64,7 +64,7 @@ class authController extends Auth {
         ]);
     }
 
-    public function login_fb() {
+    public function action_login_fb() {
         $field = [
             'email' => $_POST['email'],
             'fb_id' => $_POST['fb_id']
@@ -73,7 +73,7 @@ class authController extends Auth {
         return $this->loginBySocialMedia('fb_id', $field);
     }
 
-    public function login_tw() {
+    public function action_login_tw() {
         $field = [
             'email' => $_POST['email'],
             'tw_id' => $_POST['tw_id']
@@ -82,7 +82,7 @@ class authController extends Auth {
         return $this->loginBySocialMedia('tw_id', $field);
     }
 
-    public function login_gp() {
+    public function action_login_gp() {
         $field = [
             'email' => $_POST['email'],
             'gp_id' => $_POST['gp_id']
@@ -91,7 +91,7 @@ class authController extends Auth {
         return $this->loginBySocialMedia('gp_id', $field);
     }
 
-    public function register() {
+    public function action_register() {
         $field = [
             'username' => $_POST['username'],
             'password' => md5($_POST['password']),

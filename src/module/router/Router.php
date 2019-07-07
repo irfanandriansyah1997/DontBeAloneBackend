@@ -18,6 +18,7 @@ class Router {
             $explode_url = array_slice($explode_url, 1);
             $request->controller = $explode_url[0];
             $request->action = $explode_url[1] ?? 'index';
+            $request->action = explode('?', $request->action)[0];
             $request->params = array_slice($explode_url, 2);
         }
     }

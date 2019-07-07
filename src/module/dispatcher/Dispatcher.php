@@ -19,7 +19,7 @@ class Dispatcher {
         $controller = $this->loadController();
         $this->setBehaviour($controller->behaviour()[$this->request->action]);
 
-        echo call_user_func_array([$controller, $this->request->action], $this->request->params);
+        echo call_user_func_array([$controller, 'action_' . $this->request->action], $this->request->params);
     }
 
     private function setBehaviour($behaviour) {
