@@ -3,11 +3,13 @@ namespace DontBeAlone\controller;
 
 use DontBeAlone\module\controller\Controller;
 use DontBeAlone\traits\Activity;
+use DontBeAlone\traits\ActivityGeofencing;
 use DontBeAlone\traits\ActivityType;
 use DontBeAlone\traits\ActivityUser;
     
 class activityController extends Controller {
     use Activity;
+    use ActivityGeofencing;
     use ActivityType;
     use ActivityUser;
 
@@ -16,9 +18,16 @@ class activityController extends Controller {
         '1' => 'Accepted',
         '2' => 'Reject'
     ];
+    const RADIUS = 6373;
+    const MAX_DISTANCE = 20;
 
     public function behaviour() {
         return [
+            'get_activity' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
+            ],
             'insert' => [
                 'header' => [
                     'Content-Type: application/json;charset=utf-8'
