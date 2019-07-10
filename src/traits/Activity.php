@@ -164,6 +164,60 @@ trait Activity {
         ]);
     }
 
+    public function action_get_activity_by_id(string $id_activity) {
+        $query = "SELECT
+            t.id_activity as 'activity_id',
+            t.*,
+            ty.type as 'activity_type_type',
+            ty.detail as 'activity_type_detail'
+            FROM t_activity t
+            INNER JOIN t_activity_type ty ON ty.id_activity_type = t.activity_type
+            WHERE t.id_activity = {$id_activity}
+            GROUP BY activity_id
+        ";
+
+        return json_encode([
+            "data" => array_map(function($item) use ($id_activity) {
+                return [
+                    "id_activity" => $item->id_activity,
+                    "activity_name" => $item->activity_name,
+                    "activity_type" => [
+                        'id_activity_type' => $item->activity_type,
+                        "type" => $item->activity_type_type,
+                        "detail" => $item->activity_type_detail,
+                    ],
+                    "activity_member" => $this->getActivityUser($id_activity),
+                    "datetime" => $item->datetime,
+                    "price" => $item->price,
+                    "description" => $item->description,
+                    "lat" => $item->lat,
+                    "lng" => $item->lng,
+                    "address" => $item->address,
+                    "is_banned" => $item->is_banned
+                ];
+            }, $this->getDatabase()->query($query)),
+            "message" => "Success fetch data",
+            "success" => true
+        ]);
+    }
+
+    public function getActivityUser(string $id_activity) {
+        return array_map(
+            function($item) {
+                return [
+                    'level_user' => $item->level_user,
+                    'status' => self::STATUS[$item->status],
+                    'username' => $item->username
+                ];
+            },
+            $this->getDatabase()->select(
+                'SELECT * FROM appdb.t_activity_user WHERE id_activity = ?',
+                array($id_activity),
+                array('%s')
+            )
+        );
+    }
+
     private function getIdActivity(string $username) {
         return time() + crc32($username);
     }
