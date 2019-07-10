@@ -9,7 +9,7 @@ trait ActivityGeofencing {
                 'lng' => $_GET['lng'],
                 'radius' => self::RADIUS,
                 'distance' => $_GET['distance'] ?? self::MAX_DISTANCE,
-                'type' => $_GET['type'] ?? null
+                'type' => $_GET['type'] ?? '-1'
             ];
 
             $query = "SELECT * FROM (
@@ -17,6 +17,8 @@ trait ActivityGeofencing {
                     t.*,
                     ty.type as 'activity_type_type',
                     ty.detail as 'activity_type_detail',
+                    ty.icon as 'activity_type_icon',
+                    ty.marker_icon as 'activity_type_marker',
                     (
                         {$param['radius']} * acos(
                             cos(radians({$param['lat']}))
@@ -30,7 +32,7 @@ trait ActivityGeofencing {
                 INNER JOIN t_activity_type ty ON ty.id_activity_type = t.activity_type
             ) AS distances
             WHERE distance < {$param['distance']}";
-            $query .= " AND activity_type = {$param['type']}";
+            $query .= $param['type'] == '-1' ? "" : " AND activity_type = {$param['type']}";
             $query .= " ORDER BY distance";
             $query .= " LIMIT 30";
 
@@ -43,6 +45,8 @@ trait ActivityGeofencing {
                             'id_activity_type' => $item->activity_type,
                             "type" => $item->activity_type_type,
                             "detail" => $item->activity_type_detail,
+                            'icon' => $item->activity_type_icon,
+                            'marker' => $item->activity_type_marker
                         ],
                         "datetime" => $item->datetime,
                         "price" => $item->price,
@@ -77,6 +81,8 @@ trait ActivityGeofencing {
                 t.*,
                 ty.type as 'activity_type_type',
                 ty.detail as 'activity_type_detail',
+                ty.icon as 'activity_type_icon',
+                ty.marker_icon as 'activity_type_marker',
                 tu.level_user as 'activity_user_level',
                 tu.status as 'activity_user_status'
                 FROM t_activity t
@@ -95,6 +101,8 @@ trait ActivityGeofencing {
                             'id_activity_type' => $item->activity_type,
                             "type" => $item->activity_type_type,
                             "detail" => $item->activity_type_detail,
+                            "icon" => $item->activity_type_icon,
+                            "marker" => $item->activity_type_marker
                         ],
                         "activity_user" => [
                             'level_user' => $item->activity_user_level,

@@ -44,7 +44,7 @@ trait Activity {
                     );
 
                     return json_encode([
-                        "data" => $form['value'],
+                        "data" => null,
                         "message" => "Activity success saved to db",
                         "success" => true
                     ]);
@@ -101,7 +101,7 @@ trait Activity {
     
                 if ($updatedQuery) {
                     return json_encode([
-                        "data" => $form['value'],
+                        "data" => null,
                         "message" => "Activity success updated",
                         "success" => true
                     ]);
@@ -169,7 +169,9 @@ trait Activity {
             t.id_activity as 'activity_id',
             t.*,
             ty.type as 'activity_type_type',
-            ty.detail as 'activity_type_detail'
+            ty.detail as 'activity_type_detail',
+            ty.icon as 'activity_type_icon',
+            ty.marker_icon as 'activity_type_marker_icon'
             FROM t_activity t
             INNER JOIN t_activity_type ty ON ty.id_activity_type = t.activity_type
             WHERE t.id_activity = {$id_activity}
@@ -185,6 +187,8 @@ trait Activity {
                         'id_activity_type' => $item->activity_type,
                         "type" => $item->activity_type_type,
                         "detail" => $item->activity_type_detail,
+                        'icon' => $item->activity_type_icon,
+                        'marker' => $item->activity_type_marker_icon
                     ],
                     "activity_member" => $this->getActivityUser($id_activity),
                     "datetime" => $item->datetime,
@@ -218,6 +222,8 @@ trait Activity {
                     'id_activity_type' => $item->id_activity_type,
                     "type" => $item->type,
                     "detail" => "" . $item->detail . "",
+                    'icon' => $item->icon,
+                    'marker' => $item->activity_type_marker_icon
                 ];
             }, $this->getDatabase()->query($query)),
             "message" => "Success fetch data",
