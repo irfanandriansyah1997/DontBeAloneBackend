@@ -28,6 +28,11 @@ class activityController extends Controller {
                     'Content-Type: application/json;charset=utf-8'
                 ]
             ],
+            'get_activity_type_trending' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
+            ],
             'get_activity_by_user' => [
                 'header' => [
                     'Content-Type: application/json;charset=utf-8'

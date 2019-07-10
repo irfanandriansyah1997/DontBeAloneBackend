@@ -30,6 +30,11 @@ class authController extends Auth {
                 'header' => [
                     'Content-Type: application/json;charset=utf-8'
                 ]
+            ],
+            'is_username_exists' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
             ]
         ];
     }
@@ -138,6 +143,32 @@ class authController extends Auth {
         return json_encode([
             "data" => null,
             "message" => "An error has occured, please contact the administrator",
+            "success" => false
+        ]);
+    }
+
+    public function action_is_username_exists() {
+        if (isset($_GET['username'])) {
+            $response = $this->getDatabase()->select(
+                'SELECT *
+                FROM t_user
+                WHERE username = ? OR email = ?
+                LIMIT 0,1',
+                array($_GET['username'], $_GET['username']),
+                array('%s', '%s')
+            );
+    
+
+            return json_encode([
+                "data" => count($response) > 0,
+                "message" => count($response) > 0 ? "Username has been taken" : "Username available",
+                "success" => true
+            ]);
+        }
+
+        return json_encode([
+            "data" => false,
+            "message" => "Param username is not defined",
             "success" => false
         ]);
     }
