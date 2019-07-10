@@ -201,6 +201,30 @@ trait Activity {
         ]);
     }
 
+    public function action_get_activity_type_trending() {
+        $query = "SELECT
+            ty.*,
+            COUNT(*) as 'jml'
+            FROM appdb.t_activity t
+            INNER JOIN appdb.t_activity_type ty ON ty.id_activity_type = t.activity_type
+            GROUP BY t.activity_type
+            ORDER BY 'jml' DESC
+            LIMIT 6
+        ";
+
+        return json_encode([
+            "data" => array_map(function($item) use ($id_activity) {
+                return [
+                    'id_activity_type' => $item->id_activity_type,
+                    "type" => $item->type,
+                    "detail" => "" . $item->detail . "",
+                ];
+            }, $this->getDatabase()->query($query)),
+            "message" => "Success fetch data",
+            "success" => true
+        ]);
+    }
+
     public function getActivityUser(string $id_activity) {
         return array_map(
             function($item) {
