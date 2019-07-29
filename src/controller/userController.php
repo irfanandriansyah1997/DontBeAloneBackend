@@ -78,7 +78,7 @@ class userController extends Controller {
                 if ($updatedUser) {
                     $existingUser = $this->get_user($_POST['username']);
                     return json_encode([
-                        "data" => null,
+                        "data" => $existingUser[0],
                         "message" => "Success Updated User",
                         "success" => true
                     ]);
