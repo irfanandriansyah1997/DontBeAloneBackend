@@ -190,7 +190,7 @@ trait Activity {
                         'icon' => $item->activity_type_icon,
                         'marker' => $item->activity_type_marker_icon
                     ],
-                    "activity_member" => $this->getActivityUser($id_activity),
+                    "activity_member" => $this->getActivityUser($item->id_activity),
                     "datetime" => $item->datetime,
                     "price" => $item->price,
                     "description" => $item->description,
@@ -231,17 +231,110 @@ trait Activity {
         ]);
     }
 
+    public function action_get_activity_by_user() {
+        if (isset($_GET['username'])) {
+            $field = [
+                'username' => $_GET['username'],
+                'limit' => $_GET['limit'] ?? '-1'
+            ];
+
+            $query = "SELECT
+                t.*,
+                ty.type as 'activity_type_type',
+                ty.detail as 'activity_type_detail',
+                ty.icon as 'activity_type_icon',
+                ty.marker_icon as 'activity_type_marker',
+                u.name as 'activity_user_name',
+                u.photo as 'activity_user_photo',
+                tu.level_user as 'activity_user_level',
+                tu.status as 'activity_user_status'
+                FROM t_activity t
+                INNER JOIN t_activity_type ty ON ty.id_activity_type = t.activity_type
+                INNER JOIN t_activity_user tu ON tu.id_activity = t.id_activity
+                INNER JOIN t_user u ON u.username = tu.username
+                WHERE t.is_banned = 0 and u.username = \"{$field['username']}\"
+                ORDER BY t.datetime DESC
+            ";
+            $query .= $field['limit'] == '-1' ? '' : "LIMIT {$field['limit']}";
+
+            return json_encode([
+                "data" => array_map(function($item) use ($field) {
+                    return [
+                        "id_activity" => $item->id_activity,
+                        "activity_name" => $item->activity_name,
+                        "activity_type" => [
+                            'id_activity_type' => $item->activity_type,
+                            "type" => $item->activity_type_type,
+                            "detail" => $item->activity_type_detail,
+                            "icon" => $item->activity_type_icon,
+                            "marker" => $item->activity_type_marker
+                        ],
+                        "activity_my_user" => [
+                            'username' => $field['username'],
+                            'name' => $item->activity_user_name,
+                            'photo' => $item->activity_user_photo,
+                            'level_user' => $item->activity_user_level,
+                            'status' => self::STATUS[$item->activity_user_status]
+                        ],
+                        "activity_user" => $this->getActivityAdmin($item->id_activity)[0],
+                        "activity_pending_user_count" => count($this->getActivityPendingUser($item->id_activity)),
+                        "datetime" => $item->datetime,
+                        "price" => $item->price,
+                        "description" => $item->description,
+                        "lat" => $item->lat,
+                        "lng" => $item->lng,
+                        "address" => $item->address,
+                        "is_banned" => $item->is_banned
+                    ];
+                }, $this->getDatabase()->query($query)),
+                "message" => "Success fetch data",
+                "success" => true
+            ]);
+        }
+
+        return json_encode([
+            "data" => null,
+            "message" => "Param username is not defined",
+            "success" => false
+        ]);
+    }    
+
     public function getActivityUser(string $id_activity) {
         return array_map(
             function($item) {
                 return [
+                    'username' => $item->username,
+                    'name' => $item->name,
+                    'photo' => $item->photo,
                     'level_user' => $item->level_user,
-                    'status' => self::STATUS[$item->status],
-                    'username' => $item->username
+                    'status' => self::STATUS[$item->status]
                 ];
             },
             $this->getDatabase()->select(
-                'SELECT * FROM appdb.t_activity_user WHERE id_activity = ?',
+                'SELECT t.*, tu.photo, tu.name FROM appdb.t_activity_user t
+                INNER JOIN t_user tu ON t.username = tu.username
+                WHERE id_activity = ?
+                ORDER BY level_user ASC, status ASC',
+                array($id_activity),
+                array('%s')
+            )
+        );
+    }
+
+    public function getActivityPendingUser(string $id_activity) {
+        return array_map(
+            function($item) {
+                return [
+                    'username' => $item->username,
+                    'name' => $item->name,
+                    'photo' => $item->photo,
+                    'level_user' => $item->level_user,
+                    'status' => self::STATUS[$item->status]
+                ];
+            },
+            $this->getDatabase()->select(
+                "SELECT * FROM appdb.t_activity_user
+                WHERE id_activity = ? AND status = '0'",
                 array($id_activity),
                 array('%s')
             )
@@ -268,7 +361,21 @@ trait Activity {
             'SELECT *
             FROM t_activity
             WHERE id_activity = ?
+            AND is_banned = 0
             LIMIT 0,1',
+            array($id_activity),
+            array('%d')
+        );
+    }
+
+    public function getActivityAdmin(string $id_activity) {
+        return $this->getDatabase()->select(
+            "SELECT u.username, u.name, u.photo 
+            FROM t_activity t            
+            INNER JOIN t_activity_user tu ON tu.id_activity = t.id_activity AND tu.level_user = 'admin'
+            INNER JOIN t_user u ON u.username = tu.username
+            WHERE t.id_activity = ?
+            LIMIT 0,1",
             array($id_activity),
             array('%d')
         );

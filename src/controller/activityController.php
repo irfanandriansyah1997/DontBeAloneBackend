@@ -16,7 +16,7 @@ class activityController extends Controller {
     const STATUS = [
         '0' => 'Pending',
         '1' => 'Accepted',
-        '2' => 'Reject'
+        '2' => 'Rejected'
     ];
     const RADIUS = 6373;
     const MAX_DISTANCE = 20;

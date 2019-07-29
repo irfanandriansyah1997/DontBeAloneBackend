@@ -9,7 +9,8 @@ trait ActivityGeofencing {
                 'lng' => $_GET['lng'],
                 'radius' => self::RADIUS,
                 'distance' => $_GET['distance'] ?? self::MAX_DISTANCE,
-                'type' => $_GET['type'] ?? '-1'
+                'type' => $_GET['type'] ?? '-1',
+                'keyword' => $_GET['keyword'] ?? ''
             ];
 
             $query = "SELECT * FROM (
@@ -19,6 +20,9 @@ trait ActivityGeofencing {
                     ty.detail as 'activity_type_detail',
                     ty.icon as 'activity_type_icon',
                     ty.marker_icon as 'activity_type_marker',
+                    u.username as 'activity_user_username',
+                    u.name as 'activity_user_name',
+                    u.photo as 'activity_user_photo',
                     (
                         {$param['radius']} * acos(
                             cos(radians({$param['lat']}))
@@ -30,9 +34,12 @@ trait ActivityGeofencing {
                     ) AS distance
                 FROM t_activity t
                 INNER JOIN t_activity_type ty ON ty.id_activity_type = t.activity_type
+                INNER JOIN t_activity_user tu ON tu.id_activity = t.id_activity AND tu.level_user = 'admin'
+                INNER JOIN t_user u ON u.username = tu.username
             ) AS distances
-            WHERE distance < {$param['distance']}";
+            WHERE distance < {$param['distance']}  AND is_banned = 0";
             $query .= $param['type'] == '-1' ? "" : " AND activity_type = {$param['type']}";
+            $query .= $param['keyword'] == '' ? "" : " AND activity_name LIKE '%{$param['keyword']}%'";
             $query .= " ORDER BY distance";
             $query .= " LIMIT 30";
 
@@ -47,6 +54,11 @@ trait ActivityGeofencing {
                             "detail" => $item->activity_type_detail,
                             'icon' => $item->activity_type_icon,
                             'marker' => $item->activity_type_marker
+                        ],
+                        "activity_user" => [
+                            'username' => $item->activity_user_username,
+                            'name' => $item->activity_user_name,
+                            'photo' => $item->activity_user_photo
                         ],
                         "datetime" => $item->datetime,
                         "price" => $item->price,
@@ -70,63 +82,5 @@ trait ActivityGeofencing {
         ]);
     }
 
-    public function action_get_activity_by_user() {
-        if (isset($_GET['username'])) {
-            $field = [
-                'username' => $_GET['username'],
-                'limit' => $_GET['limit'] ?? '-1'
-            ];
-
-            $query = "SELECT
-                t.*,
-                ty.type as 'activity_type_type',
-                ty.detail as 'activity_type_detail',
-                ty.icon as 'activity_type_icon',
-                ty.marker_icon as 'activity_type_marker',
-                tu.level_user as 'activity_user_level',
-                tu.status as 'activity_user_status'
-                FROM t_activity t
-                INNER JOIN t_activity_type ty ON ty.id_activity_type = t.activity_type
-                INNER JOIN t_activity_user tu ON tu.id_activity = t.id_activity
-                INNER JOIN t_user u ON u.username = tu.username and u.username = \"{$field['username']}\"
-            ";
-            $query .= $field['limit'] == '-1' ? '' : "LIMIT {$field['limit']}";
-
-            return json_encode([
-                "data" => array_map(static function($item) use ($field) {
-                    return [
-                        "id_activity" => $item->id_activity,
-                        "activity_name" => $item->activity_name,
-                        "activity_type" => [
-                            'id_activity_type' => $item->activity_type,
-                            "type" => $item->activity_type_type,
-                            "detail" => $item->activity_type_detail,
-                            "icon" => $item->activity_type_icon,
-                            "marker" => $item->activity_type_marker
-                        ],
-                        "activity_user" => [
-                            'level_user' => $item->activity_user_level,
-                            'status' => self::STATUS[$item->activity_user_status],
-                            'username' => $field['username']
-                        ],
-                        "datetime" => $item->datetime,
-                        "price" => $item->price,
-                        "description" => $item->description,
-                        "lat" => $item->lat,
-                        "lng" => $item->lng,
-                        "address" => $item->address,
-                        "is_banned" => $item->is_banned
-                    ];
-                }, $this->getDatabase()->query($query)),
-                "message" => "Success fetch data",
-                "success" => true
-            ]);
-        }
-
-        return json_encode([
-            "data" => null,
-            "message" => "Param username is not defined",
-            "success" => false
-        ]);
-    }
+    
 }
