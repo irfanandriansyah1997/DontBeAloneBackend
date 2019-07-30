@@ -48,6 +48,47 @@ trait ActivityUser {
         ]);
     }
 
+    public function action_leave_activity() {
+        if (isset($_POST['id_activity']) && isset($_POST['username'])) {
+            if (count($this->getUser($_POST['username'])) === 0) {
+                return json_encode([
+                    "data" => null,
+                    "message" => "Username {$_POST['username']} is not found",
+                    "success" => false
+                ]);
+            } else if (count($this->getActivity($_POST['id_activity'])) === 0) {
+                return json_encode([
+                    "data" => null,
+                    "message" => "Oops activity is not found",
+                    "success" => false
+                ]);
+            } else if($this->isUserAvailableInActivity($_POST['id_activity'], $_POST['username'])['isAvailable']) {
+                $data = $this->isUserAvailableInActivity($_POST['id_activity'], $_POST['username'])['data'];
+                $delete = $this->getDatabase()->delete('t_activity_user', 'id_activity_user', $data[0]->id_activity_user);
+
+                if ($delete) {
+                    return json_encode([
+                        "data" => null,
+                        "message" => "{$_POST['username']} leave activity",
+                        "success" => false
+                    ]);
+                }
+            }
+
+            return json_encode([
+                "data" => null,
+                "message" => "{$_POST['username']} is not join",
+                "success" => false
+            ]);
+        }
+
+        return json_encode([
+            "data" => null,
+            "message" => "ID Activity / Username is not found",
+            "success" => false
+        ]);
+    }
+
     public function action_grant_activity() {
         if (isset($_POST['id_activity']) && isset($_POST['username'])) {
             if (count($this->getUser($_POST['username'])) === 0) {
