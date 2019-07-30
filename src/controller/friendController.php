@@ -150,8 +150,8 @@ class friendController extends Controller{
                 "data" => array_map(
                     static function($item) use ($temp) {
                         return [
-                            'sender' => $temp->getUser($item->sender),
-                            'receiver' => $temp->getUser($item->receiver),
+                            'sender' => $temp->getUser($item->sender)[0],
+                            'receiver' => $temp->getUser($item->receiver)[0],
                             'status' => $item->status
                         ];
                     },
@@ -181,8 +181,8 @@ class friendController extends Controller{
         if ($relationship['isAvailable']) {
             return json_encode([
                 "data" => [
-                    'sender' => $this->getUser($relationship['data'][0]->sender),
-                    'receiver' => $this->getUser($relationship['data'][0]->receiver),
+                    'sender' => $this->getUser($relationship['data'][0]->sender)[0],
+                    'receiver' => $this->getUser($relationship['data'][0]->receiver)[0],
                     'status' => $relationship['data'][0]->status
                 ],
                 "message" => "Success Reject Friend",
@@ -193,7 +193,7 @@ class friendController extends Controller{
         return json_encode([
             "data" => null,
             "message" => "An error has occured, please contact the administrator",
-            "success" => false
+            "success" => true
         ]);
     }
 }
