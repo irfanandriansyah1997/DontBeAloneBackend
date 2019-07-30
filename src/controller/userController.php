@@ -12,6 +12,11 @@ class userController extends Controller {
                     'Content-Type: application/json;charset=utf-8'
                 ]
             ],
+            'search' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
+            ],
             'update' => [
                 'header' => [
                     'Content-Type: application/json;charset=utf-8'
@@ -36,6 +41,17 @@ class userController extends Controller {
         );
     }
 
+    public function get_user_by_keyword(string $keyword) {
+        $query = "
+            SELECT *
+            FROM t_user
+            WHERE username LIKE '%{$keyword}%'
+            OR name LIKE '%{$keyword}%'
+        ";
+
+        return $this->getDatabase()->query($query);
+    }
+
     public function action_get_user_by_username(string $username) {
         $response = $this->get_user($username);
 
@@ -50,6 +66,24 @@ class userController extends Controller {
         return json_encode([
             "data" => null,
             "message" => "Oops, username {$username} is not found",
+            "success" => false
+        ]);
+    }
+
+    public function action_search() {
+        $response = $this->get_user_by_keyword($_GET['keyword']);
+
+        if (count($response) > 0) {
+            return json_encode([
+                "data" => $response,
+                "message" => "Success fetch data",
+                "success" => true
+            ]);
+        }
+
+        return json_encode([
+            "data" => null,
+            "message" => "Oops, username {$_GET['keyword']} is not found",
             "success" => false
         ]);
     }
