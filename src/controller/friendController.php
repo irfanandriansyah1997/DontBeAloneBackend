@@ -29,6 +29,11 @@ class friendController extends Controller{
                     'Content-Type: application/json;charset=utf-8'
                 ]
             ],
+            'get_friend_status' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
+            ]
         ];
     }
 
@@ -161,6 +166,33 @@ class friendController extends Controller{
         return json_encode([
             "data" => false,
             "message" => "Param username is not defined",
+            "success" => false
+        ]);
+    }
+
+    function action_get_friend_status() {
+        $field = [
+            'sender' => $_POST['sender'],
+            'receiver' => $_POST['receiver']
+        ];
+
+        $relationship = $this->getFriendById($field['sender'], $field['receiver']);
+        
+        if ($relationship['isAvailable']) {
+            return json_encode([
+                "data" => [
+                    'sender' => $this->getUser($relationship['data'][0]->sender),
+                    'receiver' => $this->getUser($relationship['data'][0]->receiver),
+                    'status' => $relationship['data'][0]->status
+                ],
+                "message" => "Success Reject Friend",
+                "success" => true
+            ]);
+        }
+
+        return json_encode([
+            "data" => null,
+            "message" => "An error has occured, please contact the administrator",
             "success" => false
         ]);
     }
