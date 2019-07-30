@@ -5,6 +5,7 @@ use DontBeAlone\module\request\Request;
 use DontBeAlone\controller\activityController;
 use DontBeAlone\controller\indexController;
 use DontBeAlone\controller\authController;
+use DontBeAlone\controller\friendController;
 use DontBeAlone\controller\userController;
 
 class Router {
@@ -28,7 +29,8 @@ class Router {
             'activity' => activityController::class,
             'index' => indexController::class,
             'auth' => authController::class,
-            'user' => userController::class
+            'user' => userController::class,
+            'friend' => friendController::class
         ];
     }
 }

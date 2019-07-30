@@ -113,6 +113,24 @@ class MySQL extends DatabaseAbstract {
         }
     }
 
+    /**
+     * Need to refactor this method cause not reusable
+     */
+    public function deleteFriend($table, $key1, $key2, $id1, $id2) {
+        $db = $this->getConnection();
+        $stmt = $db->prepare("
+            DELETE FROM {$table}
+            WHERE ({$key1} = '{$id1}' AND {$key2} = '{$id2}')
+            OR ({$key1} = '{$id2}' AND {$key2} = '{$id1}')");
+        $stmt->execute();
+
+        if ($stmt->affected_rows > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
     private function prepQuery($data, $type='insert') {
         $fields = '';
         $placeholders = '';
