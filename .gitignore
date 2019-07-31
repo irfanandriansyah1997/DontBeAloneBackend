@@ -99,4 +99,6 @@ modules.xml
 # Ignore all local history of files
 .history
 
+public/upload/*
+
 # End of https://www.gitignore.io/api/phpstorm+all,visualstudiocode

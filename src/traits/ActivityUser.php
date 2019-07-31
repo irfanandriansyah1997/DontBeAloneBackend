@@ -70,7 +70,7 @@ trait ActivityUser {
                     return json_encode([
                         "data" => null,
                         "message" => "{$_POST['username']} leave activity",
-                        "success" => false
+                        "success" => true
                     ]);
                 }
             }
