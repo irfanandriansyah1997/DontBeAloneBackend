@@ -98,15 +98,16 @@ class userController extends Controller {
         if (isset($_POST['username'])) {
             $field = [['key' => 'email', 'format' => '%s'], ['key' => 'name', 'format' => '%s'],
                 ['key' => 'phone_number', 'format' => '%s'], ['key' => 'address', 'format' => '%s'],
-                ['key' => 'bio', 'format' => '%s']];
+                ['key' => 'bio', 'format' => '%s'], ['key' => 'emergency_number', 'format' => '%s']];
             $form = (new Form($field))
                 ->setSource($_POST)
                 ->removeFieldNull()
                 ->removeSpecialChar()
                 ->result('update');
             $response = $this->get_user($_POST['username']);
+            $emergency = explode("," , $_POST['emergency_number']);
         
-            if (count($response) > 0) {
+            if (count($response) > 0 && count($emergency) <= 3) {
                 $updatedUser = $this->getDatabase()->update(
                     't_user',
                     $form['value'],
@@ -123,6 +124,12 @@ class userController extends Controller {
                         "success" => true
                     ]);
                 }
+            } else if (count($emergency) > 3) {
+                return json_encode([
+                    "data" => null,
+                    "message" => "Emergency phone number maximum is 3",
+                    "success" => false
+                ]);
             }
         
             return json_encode([
