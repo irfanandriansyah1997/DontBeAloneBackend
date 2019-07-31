@@ -1,6 +1,7 @@
 <?php
 namespace DontBeAlone\controller;
 
+use DateTime;
 use DontBeAlone\module\controller\Controller;
 use DontBeAlone\module\form\Form;
     
@@ -18,6 +19,11 @@ class userController extends Controller {
                 ]
             ],
             'update' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
+            ],
+            'update_photo' => [
                 'header' => [
                     'Content-Type: application/json;charset=utf-8'
                 ]
@@ -131,6 +137,59 @@ class userController extends Controller {
             "message" => "Oops, username not defined",
             "success" => false
         ]);
+    }
+
+    public function action_update_photo() {
+        if (!empty($_FILES['photo']) && isset($_POST['username'])) {
+            $response = $this->get_user($_POST['username']);
+        
+            if (count($response) > 0) {
+
+                $upload = $this->uploadFile($_FILES['photo'], $_POST['username']);
+
+                if ($upload) {
+                    $updatedUser = $this->getDatabase()->update(
+                        't_user',
+                        ['photo' => $upload],
+                        array('%s'),
+                        array('username' => $_POST['username']),
+                        array('%s')
+                    );
+
+                    if ($updatedUser) {
+                        $existingUser = $this->get_user($_POST['username']);
+                        return json_encode([
+                            "data" => null,
+                            "message" => "Success Updated Photo User",
+                            "success" => true
+                        ]);
+                    }
+                }
+            }
+        
+            return json_encode([
+                "data" => null,
+                "message" => "An error has occured, please contact the administrator",
+                "success" => false
+            ]);
+        }
+    }
+
+    private function uploadFile($files, $username) {
+        $tempFile = $files['tmp_name'];
+        $array = explode('.', $files['name']);
+        $extension = end($array);
+        $date = new DateTime('2008-09-22');
+        $name = 'upload-image-'.$date->getTimestamp().'-'.$username.'.'.$extension;
+        $dirUpload = "/var/www/html/public/upload/";
+        $uploading = move_uploaded_file($tempFile, $dirUpload.$name);
+
+
+        if ($uploading) {
+            return 'http://111.92.169.32/upload/'.$name;
+        } else {
+            return false;
+        }
     }
 
     public function action_update_password() {
