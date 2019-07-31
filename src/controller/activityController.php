@@ -68,6 +68,11 @@ class activityController extends Controller {
                     'Content-Type: application/json;charset=utf-8'
                 ]
             ],
+            'invite_activity' => [
+                'header' => [
+                    'Content-Type: application/json;charset=utf-8'
+                ]
+            ],
             'grant_activity' => [
                 'header' => [
                     'Content-Type: application/json;charset=utf-8'

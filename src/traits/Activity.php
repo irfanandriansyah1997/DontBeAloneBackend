@@ -15,7 +15,8 @@ trait Activity {
                     ['key' => 'description', 'format' => '%s'],
                     ['key' => 'lat', 'format' => '%d'],
                     ['key' => 'lng', 'format' => '%d'],
-                    ['key' => 'address', 'format' => '%s']
+                    ['key' => 'address', 'format' => '%s'],
+                    ['key' => 'datetime', 'format' => '%s']
                 ];
                 $form = (new Form($field))
                     ->setSource(
@@ -80,7 +81,8 @@ trait Activity {
                 ['key' => 'description', 'format' => '%s'],
                 ['key' => 'lat', 'format' => '%d'],
                 ['key' => 'lng', 'format' => '%d'],
-                ['key' => 'address', 'format' => '%s']
+                ['key' => 'address', 'format' => '%s'],
+                ['key' => 'datetime', 'format' => '%s']
             ];
             $form = (new Form($field))
                 ->setSource($_POST)

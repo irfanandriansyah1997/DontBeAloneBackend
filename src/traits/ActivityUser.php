@@ -48,6 +48,52 @@ trait ActivityUser {
         ]);
     }
 
+    public function action_invite_activity() {
+        if (isset($_POST['id_activity']) && isset($_POST['username'])) {
+            if (count($this->getUser($_POST['username'])) === 0) {
+                return json_encode([
+                    "data" => null,
+                    "message" => "Username {$_POST['username']} is not found",
+                    "success" => false
+                ]);
+            } else if (count($this->getActivity($_POST['id_activity'])) === 0) {
+                return json_encode([
+                    "data" => null,
+                    "message" => "Oops activity is not found",
+                    "success" => false
+                ]);
+            } else if($this->isUserAvailableInActivity($_POST['id_activity'], $_POST['username'])['isAvailable']) {
+                return json_encode([
+                    "data" => null,
+                    "message" => "{$_POST['username']} is already join",
+                    "success" => false
+                ]);
+            }
+
+            $result = $this->insertActivityUser($_POST['username'], $_POST['id_activity'], 'user', '1');
+
+            if ($result) {
+                return json_encode([
+                    "data" => null,
+                    "message" => "{$_POST['username']} success join activity",
+                    "success" => true
+                ]);
+            }
+
+            return json_encode([
+                "data" => null,
+                "message" => "An error has occured, please contact the administrator",
+                "success" => false
+            ]);
+        }
+
+        return json_encode([
+            "data" => null,
+            "message" => "ID Activity / Username is not found",
+            "success" => false
+        ]);
+    }
+
     public function action_leave_activity() {
         if (isset($_POST['id_activity']) && isset($_POST['username'])) {
             if (count($this->getUser($_POST['username'])) === 0) {
