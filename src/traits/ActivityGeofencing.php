@@ -37,7 +37,8 @@ trait ActivityGeofencing {
                 INNER JOIN t_activity_user tu ON tu.id_activity = t.id_activity AND tu.level_user = 'admin'
                 INNER JOIN t_user u ON u.username = tu.username
             ) AS distances
-            WHERE distance < {$param['distance']}  AND is_banned = 0";
+            WHERE distance < {$param['distance']}  AND is_banned = 0
+            AND datetime >= NOW()";
             $query .= $param['type'] == '-1' ? "" : " AND activity_type = {$param['type']}";
             $query .= $param['keyword'] == '' ? "" : " AND activity_name LIKE '%{$param['keyword']}%'";
             $query .= " ORDER BY distance";
