@@ -173,7 +173,8 @@ trait Activity {
             ty.type as 'activity_type_type',
             ty.detail as 'activity_type_detail',
             ty.icon as 'activity_type_icon',
-            ty.marker_icon as 'activity_type_marker_icon'
+            ty.marker_icon as 'activity_type_marker_icon',
+            IF(t.datetime >= NOW(), false, true) as 'is_finished'
             FROM t_activity t
             INNER JOIN t_activity_type ty ON ty.id_activity_type = t.activity_type
             WHERE t.id_activity = {$id_activity}
@@ -199,7 +200,8 @@ trait Activity {
                     "lat" => $item->lat,
                     "lng" => $item->lng,
                     "address" => $item->address,
-                    "is_banned" => $item->is_banned
+                    "is_banned" => $item->is_banned,
+                    'is_finished' => $item->is_finished
                 ];
             }, $this->getDatabase()->query($query)),
             "message" => "Success fetch data",
@@ -255,7 +257,7 @@ trait Activity {
                 INNER JOIN t_activity_type ty ON ty.id_activity_type = t.activity_type
                 INNER JOIN t_activity_user tu ON tu.id_activity = t.id_activity
                 INNER JOIN t_user u ON u.username = tu.username
-                WHERE t.is_banned = 0 and u.username = \"{$field['username']}\"
+                WHERE t.is_banned = 0 and u.username = \"{$field['username']}\" and t.datetime >= NOW()
                 ORDER BY t.datetime DESC
             ";
             $query .= $field['limit'] == '-1' ? '' : "LIMIT {$field['limit']}";

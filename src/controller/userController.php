@@ -186,7 +186,7 @@ class userController extends Controller {
         $tempFile = $files['tmp_name'];
         $array = explode('.', $files['name']);
         $extension = end($array);
-        $date = new DateTime('2008-09-22');
+        $date = new DateTime();
         $name = 'upload-image-'.$date->getTimestamp().'-'.$username.'.'.$extension;
         $dirUpload = "/var/www/html/public/upload/";
         $uploading = move_uploaded_file($tempFile, $dirUpload.$name);
