@@ -257,7 +257,7 @@ trait Activity {
                 INNER JOIN t_activity_type ty ON ty.id_activity_type = t.activity_type
                 INNER JOIN t_activity_user tu ON tu.id_activity = t.id_activity
                 INNER JOIN t_user u ON u.username = tu.username
-                WHERE t.is_banned = 0 and u.username = \"{$field['username']}\" and t.datetime >= NOW()
+                WHERE t.is_banned = 0 and u.username = \"{$field['username']}\"
                 ORDER BY t.datetime DESC
             ";
             $query .= $field['limit'] == '-1' ? '' : "LIMIT {$field['limit']}";
